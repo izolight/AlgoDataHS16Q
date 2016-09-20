@@ -76,7 +76,7 @@ public class SortTest {
 			swap(a,i,rand.nextInt(n-1));
 		}
 		
-		cnt=0;  // for statistcs reasons
+		cnt=0;  // for statistics reasons
 		// get Time
 		te1=System.nanoTime();
 		t1 = threadBean.getCurrentThreadCpuTime();
