@@ -44,6 +44,23 @@ public class SortTest {
 		}
 	}
 
+	public static void mergeSort(int [] a){
+		mSort(a,0,a.length);
+	}
+	
+	private static void mSort(int[] a, int from, int to) {
+		if (from==to) return;
+		int med  = (from+to)/2;
+		mSort(a,from,med); // erste Hälfte sortieren
+		mSort(a,med+1,to); // zweite Hälfte sortieren
+		merge(a,from,med,to);
+	}
+
+	private static void merge(int[] a, int from, int med, int to) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	/**
 	 * swap the array elements a[i] and a[k]
 	 * @param a int array 
@@ -59,7 +76,7 @@ public class SortTest {
 
 	public static void main(String[] args) {
 		long t1=0,t2=0,te1=0,te2=0,eTime=0,time=0;
-		int n = 10000;
+		int n = 200000;
 		// we need a random generator
 		Random rand=new Random(Integer.MAX_VALUE);
 		//rand.setSeed(54326346); // initialize always in the same state
