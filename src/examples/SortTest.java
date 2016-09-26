@@ -62,7 +62,7 @@ public class SortTest {
 		// a[from..med] and a[med+1..to] are already sorted
 		// create a sorted sequence in b[from..to]
 		int left=from,right=med+1,i=from;
-		while (left<=to){
+		while (left<=med){
 			if (right>to){
 				// copy the rest of the first section
 				while(left<=med) b[i++]=a[left++];
@@ -93,7 +93,7 @@ public class SortTest {
 
 	public static void main(String[] args) {
 		long t1=0,t2=0,te1=0,te2=0,eTime=0,time=0;
-		int n = 100000000;
+		int n = 10000000;
 		// we need a random generator
 		Random rand=new Random(Integer.MAX_VALUE);
 		//rand.setSeed(54326346); // initialize always in the same state
