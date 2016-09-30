@@ -26,7 +26,7 @@ public class MyQueue<E> implements Queue<E> {
 	@Override
 	public void enqueue(E o) {
 		if (size==stor.length) expand();
-		if (in == stor.length) in = 0;
+		if (in == stor.length) in = 0; // wrap around
 		stor[in++]=o;
 		size++;
 	}
@@ -34,7 +34,7 @@ public class MyQueue<E> implements Queue<E> {
 	@Override
 	public E dequeue() {
 		if (size==0) throw new RuntimeException("empty queue");
-		if (out==stor.length) out = 0;
+		if (out==stor.length) out = 0; // wrap around
 		size--;
 		return stor[out++];
 	}
@@ -79,7 +79,6 @@ public class MyQueue<E> implements Queue<E> {
 		System.out.println(q.dequeue());
 		q.enqueue(13);
 		System.out.println(q.dequeue());
-		
 	}
 
 }
