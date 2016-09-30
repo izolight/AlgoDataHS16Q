@@ -5,47 +5,81 @@ import java.util.Arrays;
 public class MyQueue<E> implements Queue<E> {
 	// simple array based queue (circular buffer)
 	
-	private E[] stor = (E[]) new Object[4];
+	private E[] stor = (E[]) new Object[1];
 	
 	private int in,out,size;
 
+
+	
 	private void expand(){
-		stor = Arrays.copyOf(stor,2*stor.length);
+		System.out.println("expanding..");
+		E[] tmp = stor;
+		stor = (E[]) new Object[tmp.length*2];
+		for (int i=0;i<size;i++){
+			if (out==size) out = 0;
+			stor[i] = tmp[out++];
+		}
+		out=0;
+		in=size;
 	}
 
 	@Override
 	public void enqueue(E o) {
-		// TODO Auto-generated method stub
-
+		if (size==stor.length) expand();
+		if (in == stor.length) in = 0;
+		stor[in++]=o;
+		size++;
 	}
 
 	@Override
 	public E dequeue() {
-		// TODO Auto-generated method stub
-		return null;
+		if (size==0) throw new RuntimeException("empty queue");
+		if (out==stor.length) out = 0;
+		size--;
+		return stor[out++];
 	}
 
 	@Override
 	public E head() {
-		// TODO Auto-generated method stub
-		return null;
+		if (size == 0) throw new RuntimeException("queue is empty!");
+		return stor[out];
 	}
 
 	@Override
 	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
+		return size;
 	}
 
 	@Override
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-		return false;
+		return size == 0;
 	}
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+		Queue<Integer> q = new MyQueue<>();
+		q.enqueue(1);
+		q.enqueue(2);
+		q.enqueue(3);
+		q.enqueue(4);
+		q.enqueue(5);
+		System.out.println(q.dequeue());
+		q.enqueue(6);		
+		System.out.println(q.dequeue());
+		q.enqueue(7);
+		System.out.println(q.dequeue());
+		q.enqueue(8);
+		System.out.println(q.dequeue());
+		q.enqueue(9);
+		System.out.println(q.dequeue());
+		q.enqueue(10);		
+		System.out.println(q.dequeue());
+		q.enqueue(11);
+		System.out.println(q.dequeue());
+		q.enqueue(12);
+		System.out.println(q.dequeue());
+		q.enqueue(13);
+		System.out.println(q.dequeue());
+		
 	}
 
 }
