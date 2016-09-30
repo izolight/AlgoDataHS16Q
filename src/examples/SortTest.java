@@ -52,9 +52,9 @@ public class SortTest {
 	private static void mSort(int[] a, int from, int to) {
 		if (from==to) return; 
 		int med  = (from+to)/2;
-		mSort(a,from,med); // erste Hälfte sortieren
-		mSort(a,med+1,to); // zweite Hälfte sortieren
-		merge(a,from,med,to);
+		mSort(a,from,med); // sort first half
+		mSort(a,med+1,to); // sort second half
+		merge(a,from,med,to); // merge the two parts
 	}
 
 	private static void merge(int[] a, int from, int med, int to) {
