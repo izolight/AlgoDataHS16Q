@@ -1,6 +1,9 @@
 package examples;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 public class MyLinkedList<E> implements List<E> {
 	// auxiliary class for the positions
@@ -105,8 +108,17 @@ public class MyLinkedList<E> implements List<E> {
 
 	@Override
 	public void remove(Position<E> p) {
-		// TODO Auto-generated method stub
-
+		LNode n = checkAndCast(p);
+		n.creator = null;
+		size--;
+		if (n.prev != null){
+			n.prev.next = n.next;
+		}
+		else first=n.next;
+		if (n.next!=null){
+			n.next.prev=n.prev;
+		}
+		else last=n.prev;
 	}
 
 	@Override
@@ -134,8 +146,32 @@ public class MyLinkedList<E> implements List<E> {
 	}
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+		List<Integer> ll = new MyLinkedList<>();
+		ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();	
+		final int N=100000; 
+		Position<Integer>[] pos = new Position[N];
+		Integer [] ints = new Integer[N];
+		long t1,t2,te1,te2;
+		LinkedList<Integer> jl = new LinkedList<>();
+		t1 = threadBean.getCurrentThreadCpuTime();
+		te1 = System.nanoTime(); // np was first!
+		for (int i=0;i<N;i++) {
+			ints[i]=i;
+			jl.addFirst(i);
+		}
+		// for (int i=0;i<N;i++) jl.remove(ints[i]);
+		
+		te2 = System.nanoTime();
+		t2 = threadBean.getCurrentThreadCpuTime();
+		System.out.println("java LinkedList: time to stor "+N+" elements:[s] "+1E-9*(te2-te1));
+		System.out.println(" cpu time:[s] "+1E-9*(t2-t1));
+		t1 = threadBean.getCurrentThreadCpuTime();
+		te1 = System.nanoTime();
+		for (int i=0;i<N;i++) pos[i] = ll.insertFirst(i);
+		// for (int i=0;i<N;i++) ll.remove(pos[i]);
+		te2 = System.nanoTime();
+		t2 = threadBean.getCurrentThreadCpuTime();
+		System.out.println("MyLinkedList: time to store "+N+" elements:[s] "+1E-9*(te2-te1));
+		System.out.println(" cpu time: "+1E-9*(t2-t1));	
 	}
-
 }
