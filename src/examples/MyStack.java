@@ -56,8 +56,8 @@ public class MyStack<E> implements Stack<E> {
 		ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();	
 		final int N=16*1024*1024+2; 
 		long t1,t2,te1,te2;
-		MyStack<Integer> st = new MyStack<>(1);
-		ArrayList<Integer> al = new ArrayList<Integer>(1);
+		MyStack<Integer> st = new MyStack<>(N);
+		ArrayList<Integer> al = new ArrayList<Integer>(N);
 		t1 = threadBean.getCurrentThreadCpuTime();
 		te1 = System.nanoTime();
 		for (int i=0;i<N;i++) {

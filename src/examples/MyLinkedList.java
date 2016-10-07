@@ -5,7 +5,7 @@ import java.lang.management.ThreadMXBean;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class MyLinkedList<E> implements List<E> {
+public class MyLinkedList<E> implements List<E>, Iterable<E> {
 	// auxiliary class for the positions
 	private class LNode implements Position<E>{
 		E elem;
@@ -90,8 +90,18 @@ public class MyLinkedList<E> implements List<E> {
 
 	@Override
 	public Position<E> insertLast(E o) {
-		// TODO Auto-generated method stub
-		return null;
+		LNode n = new LNode();
+		n.elem = o;
+		n.prev = last;
+		if (last != null){
+			last.next = n;			
+		}
+		else {
+			first = n;
+		}
+		last = n;
+		size++;	
+		return n;
 	}
 
 	@Override
@@ -129,8 +139,21 @@ public class MyLinkedList<E> implements List<E> {
 
 	@Override
 	public Iterator<E> elements() {
-		// TODO Auto-generated method stub
-		return null;
+		return new Iterator<E>(){
+			LNode curent = first;
+			@Override
+			public boolean hasNext() {
+				return curent != null;
+			}
+
+			@Override
+			public E next() {
+				E ret = curent.elem;
+				curent = curent.next;
+				return ret;
+			}
+			
+		};
 	}
 
 	@Override
@@ -146,9 +169,9 @@ public class MyLinkedList<E> implements List<E> {
 	}
 
 	public static void main(String[] args) {
-		List<Integer> ll = new MyLinkedList<>();
+		MyLinkedList<Integer> ll = new MyLinkedList<>();
 		ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();	
-		final int N=100000; 
+		final int N=10; 
 		Position<Integer>[] pos = new Position[N];
 		Integer [] ints = new Integer[N];
 		long t1,t2,te1,te2;
@@ -159,7 +182,7 @@ public class MyLinkedList<E> implements List<E> {
 			ints[i]=i;
 			jl.addFirst(i);
 		}
-		// for (int i=0;i<N;i++) jl.remove(ints[i]);
+		//for (int i=0;i<N;i++) jl.remove(ints[i]);
 		
 		te2 = System.nanoTime();
 		t2 = threadBean.getCurrentThreadCpuTime();
@@ -173,5 +196,13 @@ public class MyLinkedList<E> implements List<E> {
 		t2 = threadBean.getCurrentThreadCpuTime();
 		System.out.println("MyLinkedList: time to store "+N+" elements:[s] "+1E-9*(te2-te1));
 		System.out.println(" cpu time: "+1E-9*(t2-t1));	
+		for (Integer i : ll) {
+			System.out.println(i);
+		}
+	}
+
+	@Override
+	public Iterator<E> iterator() {
+		return elements();
 	}
 }
