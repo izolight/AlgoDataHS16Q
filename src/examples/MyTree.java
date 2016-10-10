@@ -186,7 +186,10 @@ public class MyTree<E> implements Tree<E> {
 		
 	}
 
-	static int height(MyTree t){
+	static int height(MyTree t	public void print(){
+		
+	}
+){
 		if (t.size == 0) return 0;
 		return height(t, t.root());
 	}
@@ -198,10 +201,16 @@ public class MyTree<E> implements Tree<E> {
 	
 	static int maxDepth;
 	static Position deepestPos;
-	
+	public void print(){
+		
+	}
+
 	static Position deepestPos(MyTree t){
 		if (t.size()==0) return null;
-		Temp tmp = new Temp();
+		Temp tmp = new Temp()	public void print(){
+			
+		}
+;
 		tmp.d = 0;
 		tmp.deepest = t.root();
 		traverse(t,t.root(),0,tmp);
