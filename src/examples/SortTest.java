@@ -44,6 +44,51 @@ public class SortTest {
 		}
 	}
 
+	public static boolean isHeap(int [] a){
+		for (int i=1;i<a.length;i++) if (a[i]>a[(i-1)/2]) return false;
+		return true;
+	}
+	
+	public static void heapSort(int []a){
+//		for (int i=1; i< a.length;i++) upHeap(a,i);
+		for (int i=a.length/2;i>=0;i--) downHeap(a,i,a.length);
+		System.out.println(isHeap(a));
+		for (int i=a.length-1;i>=0;i--){
+			swap(a,0,i);
+			downHeap(a,0,i);
+		}
+		
+	}
+	
+	private static void downHeap(int[] a, int pos, int len) {
+		// precondition: a[0..len-1] is a correct maxHeap
+		// with exception of a[pos] which is ev. too small.
+		// Swap a[pos] with the bigger of the two children
+		// until heap ok.
+		int left = pos*2+1;
+		int right = left+1;
+		while(left<len){
+			int max = left;
+			if (right<len && a[right]>a[left]) max = right;
+			if (a[max]<=a[pos]) return;
+			swap(a,pos,max);
+			pos=max;
+			left=pos*2+1;
+			right=left+1;
+		}	
+	}
+
+	private static void upHeap(int[] a, int pos) {
+		// precondition a[0..pos-1] is a maxheap
+		// postcondition: a[0..pos] is a maxheap
+		while (pos>0){
+			int parent = (pos-1)/2;
+			if (a[parent]>=a[pos]) return;
+			swap(a,pos,parent);
+			pos = parent;
+		}
+	}
+
 	public static void mergeSort(int [] a){
 		b=new int[a.length]; // work array
 		mSort(a,0,a.length-1);
