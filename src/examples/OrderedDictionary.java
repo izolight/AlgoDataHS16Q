@@ -29,7 +29,7 @@ public interface OrderedDictionary<K extends Comparable<? super K>,E> {
 	/**
 	 * @param key
 	 * @return all Locator objects with its key equal to 'key' or 
-	 * an arry of size 0 if there is no such locator in this dictionary 
+	 * an array of size 0 if there is no such locator in this dictionary 
 	 */
 	public Locator<K,E>[] findAll(K key); 
 
