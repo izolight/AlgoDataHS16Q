@@ -71,8 +71,17 @@ public class MyTree<E> implements Tree<E> {
 
 	@Override
 	public Iterator<E> childrenElements(Position<E> parent) {
-		// TODO Auto-generated method stub
-		return null;
+		TNode np = checkAndCast(parent);
+		return new Iterator<E>(){
+			Iterator<TNode> it = np.children.elements();
+			public boolean hasNext() {
+				return it.hasNext();
+			}
+			@Override
+			public E next() {
+				return it.next().elem;
+			}			
+		};
 	}
 
 	@Override
@@ -122,21 +131,21 @@ public class MyTree<E> implements Tree<E> {
 		if (n!= root) {
 			n.parent.children.remove(n.myChildrenPos);
 		}
+		else root = null;
 		size--;
 		n.creator = null;
 	}
 
 	@Override
 	public boolean isExternal(Position<E> p) {
-		// TODO Auto-generated method stub
-		return false;
+		TNode n = checkAndCast(p);
+		return n.children.size() == 0;
 	}
 
 	@Override
 	public boolean isInternal(Position<E> p) {
-		// TODO Auto-generated method stub
-		return false;
-		
+		TNode n = checkAndCast(p);
+		return n.children.size() != 0;
 	}
 
 	@Override
@@ -146,7 +155,6 @@ public class MyTree<E> implements Tree<E> {
 
 	@Override
 	public E replaceElement(Position<E> p, E o) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
@@ -179,17 +187,14 @@ public class MyTree<E> implements Tree<E> {
 		t.addChild(p3, "kapitel 2.1.1");
 		t.addChild(p3, "kapitel 2.1.2");
 		t.print();
-		t.removeSubtree(p3);
+//		t.removeSubtree(p3);
 		t.print();
 		System.out.println(height(t));
 		System.out.println(deepestPos(t).element());
 		
 	}
 
-	static int height(MyTree t	public void print(){
-		
-	}
-){
+	static int height(MyTree t){
 		if (t.size == 0) return 0;
 		return height(t, t.root());
 	}
@@ -201,19 +206,11 @@ public class MyTree<E> implements Tree<E> {
 	
 	static int maxDepth;
 	static Position deepestPos;
-	public void print(){
-		
-	}
 
 	static Position deepestPos(MyTree t){
 		if (t.size()==0) return null;
-		Temp tmp = new Temp()	public void print(){
-			
-		}
-;
-		tmp.d = 0;
-		tmp.deepest = t.root();
-		traverse(t,t.root(),0,tmp);
+		Temp tmp = new Temp();
+		traverse(t,t.root(),1,tmp);
 		return tmp.deepest;
 	}
 	
