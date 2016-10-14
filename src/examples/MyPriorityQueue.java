@@ -70,7 +70,7 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements
 
 	@Override
 	public Locator<K, E> removeMin() {
-		PQNode ret = heap[1];
+		PQNode<K,E> ret = heap[1];
 		ret.creator = null;
 		swap(size,1);
 		size--;
