@@ -30,7 +30,7 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements
 	private int size;
 	
 	private void swap(int i, int k){
-		PQNode tmp = heap[i];
+		PQNode<K,E> tmp = heap[i];
 		heap[i] = heap[k];
 		heap[k] = tmp;
 		heap[i].pos=i;
@@ -89,8 +89,7 @@ public class MyPriorityQueue<K extends Comparable<? super K>, E> implements
 
 	@Override
 	public void remove(Locator<K, E> loc) {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override

@@ -40,7 +40,6 @@ public class MyLinkedList<E> implements List<E>, Iterable<E> {
 
 	@Override
 	public Position<E> last() {
-		// TODO Auto-generated method stub
 		return last;
 	}
 
@@ -106,14 +105,38 @@ public class MyLinkedList<E> implements List<E>, Iterable<E> {
 
 	@Override
 	public Position<E> insertBefore(Position<E> p, E o) {
-		// TODO Auto-generated method stub
-		return null;
+		LNode np = checkAndCast(p);
+		LNode n = new LNode();
+		n.elem = o;
+		size++;
+		n.next = np;
+		if (np.prev == null){
+			first = n; // np was first!
+		}
+		else {
+			n.prev = np.prev;
+			np.prev.next = n;
+		}
+		np.prev = n;
+		return n;
 	}
 
 	@Override
 	public Position<E> insertAfter(Position<E> p, E o) {
-		// TODO Auto-generated method stub
-		return null;
+		LNode np = checkAndCast(p);		
+		LNode n = new LNode();
+		n.elem = o;
+		size++;
+		n.prev = np;
+		if (np.next == null){
+			last = n; // np was last!
+		}
+		else {
+			n.next = np.next;
+			np.next.prev = n;
+		}
+		np.next = n;
+		return n;
 	}
 
 	@Override
@@ -133,8 +156,21 @@ public class MyLinkedList<E> implements List<E>, Iterable<E> {
 
 	@Override
 	public Iterator<Position<E>> positions() {
-		// TODO Auto-generated method stub
-		return null;
+		return new Iterator<Position<E>>(){
+			LNode curent = first;
+			@Override
+			public boolean hasNext() {
+				return curent!=null;
+			}
+
+			@Override
+			public Position<E> next() {
+				LNode ret = curent;
+				curent = curent.next;
+				return ret;
+			}
+			
+		};
 	}
 
 	@Override
@@ -158,14 +194,12 @@ public class MyLinkedList<E> implements List<E>, Iterable<E> {
 
 	@Override
 	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
+		return size;
 	}
 
 	@Override
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-		return false;
+		return size == 0;
 	}
 
 	public static void main(String[] args) {
