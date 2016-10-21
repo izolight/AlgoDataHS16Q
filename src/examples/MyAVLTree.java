@@ -119,8 +119,19 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 	}
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+		MyAVLTree<Integer,Object> t = new MyAVLTree<>();
+		t.insert(5,"");
+		t.insert(8,"");
+		t.insert(3,"");
+		t.insert(12,"");
+		t.insert(15,"");
+		t.printKeys();
 	}
 
+	private void printKeys() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 }
