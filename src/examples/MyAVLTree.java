@@ -23,7 +23,7 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 			return key;
 		}
 		
-		boolean esExternal(){
+		boolean isExternal(){
 			return left == null;
 		}
 		
@@ -67,7 +67,16 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 
 	@Override
 	public Locator<K, E> insert(K key, E o) {
-		return null;
+		AVLNode n = root;
+		while( ! n.isExternal()){
+			if (key.compareTo(n.key)>=0){
+				n=n.right;
+			}
+			else n=n.left;
+		}
+		n.expand(key,o);
+		size++;
+		return n;
 	}
 
 	@Override
@@ -125,12 +134,21 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 		t.insert(3,"");
 		t.insert(12,"");
 		t.insert(15,"");
+		t.insert(7,"");
+		t.insert(5,"");
 		t.printKeys();
 	}
 
 	private void printKeys() {
-		// TODO Auto-generated method stub
-		
+		if (size>0) printKeys(root,"");
+	}
+
+	private void printKeys(AVLNode n, String ind) {
+		if (n.isExternal()) return;
+		printKeys(n.right,ind+"-");
+		System.out.println(ind+n.key);
+		printKeys(n.left,ind+"-");
+	
 	}
 
 	
