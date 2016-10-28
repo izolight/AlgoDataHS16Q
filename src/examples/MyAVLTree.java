@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
+
+
 public class MyAVLTree<K extends Comparable<? super K>, E> implements
 		OrderedDictionary<K, E> {
 
@@ -49,6 +51,18 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 	private AVLNode root = new AVLNode();
 	private int size;
 	
+	private AVLNode checkAndCast(Locator<K,E> p) {
+		AVLNode n;
+		try {
+			n = (AVLNode) p;
+		} catch (ClassCastException e) {
+			throw new RuntimeException("This is not a Locator belonging to MyLinkedList"); 
+		}
+		if (n.creator == null) throw new RuntimeException("locator was allready deleted!");
+		if (n.creator != this) throw new RuntimeException("locator belongs to another MyLinkedList instance!");			
+		return n;
+	}
+
 	
 	@Override
 	public int size() {
