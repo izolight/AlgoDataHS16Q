@@ -118,14 +118,49 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 		adjustHeightAboveAndRebalance(n);
 		size++;
 		return n;
-	}
-
-	
+	}	
 	
 	@Override
 	public void remove(Locator<K, E> loc) {
-
+		AVLNode n = checkAndCast(loc);
+		AVLNode v = null;
+		if (! n.left.isExternal() && ! n.right.isExternal()){
+			// we have to replace
+			AVLNode w = n.left;
+			while( ! w.right.isExternal()) w = w.right;
+			v=removeAboveExternal(w);
+			// now we replace n by w
+			w.parent = n.parent;
+			if (n.isLeftChild()) w.parent.left=w;
+			else if (n.isRightChild()) w.parent.right=w;
+			else root = w;
+			w.left = n.left;
+			w.right = n.right;
+			w.height = n.height;
+			w.left.parent=w;
+			w.right.parent=w;
+		}
+		else {
+			v=removeAboveExternal(n);
+		}
+		size--;
+		n.creator = null;
+		adjustHeightAboveAndRebalance(n);
 	}
+
+	private AVLNode removeAboveExternal( AVLNode n) {
+		AVLNode v =null;
+		if (n.left.isExternal()) v=n.right;
+		else if (n.right.isExternal()) v=n.left;
+		else throw new RuntimeException("should never happen!");
+		if (n.isLeftChild()) n.parent.left = v;
+		else if (n.isRightChild()) n.parent.right = v;
+		else root=v;
+		v.parent = n.parent;
+		v.height = n.height;
+		return v;
+	}
+
 
 	@Override
 	public Locator<K, E> closestBefore(K key) {
@@ -290,8 +325,10 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 		MyAVLTree<Integer,Object> t = new MyAVLTree<>();
 		Random r = new Random();
 		final int N = 100000;
+		Locator [] locs = new Locator[N]; 
 		long t1 = System.nanoTime();
-		for (int i=0;i<N;i++) t.insert(i,"");
+		for (int i=0;i<N;i++)locs[i]= t.insert(i,"");
+		for (int i=0;i<N*0.9;i++) t.remove(locs[i]);
 		long t2 = System.nanoTime();
 		System.out.println("inserted "+N+" nodes. Time [s]: "+((t2-t1)*1e-9));
 		System.out.println(t.root.height);
