@@ -101,6 +101,7 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 			else n=n.left;
 		}
 		n.expand(key,o);
+		adjustHeightAboveAndRebalance(n);
 		size++;
 		return n;
 	}
@@ -157,7 +158,12 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 	private void adjustHeightAboveAndRebalance(AVLNode n){
 		n=n.parent;
 		while(n!=null){
-		  // ....
+			int newHeight = 1+Math.max(n.left.height,n.right.height);
+			boolean balanced = Math.abs(n.left.height-n.right.height)<2;
+			if (n.height == newHeight && balanced) return;
+			n.height=newHeight;
+			if ( ! balanced) n=restructure(n);
+			n=n.parent;
 		}
 	}
 
@@ -269,21 +275,28 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 	public static void main(String[] args) {
 		MyAVLTree<Integer,Object> t = new MyAVLTree<>();
 		Random r = new Random();
-		t.insert(7,"");
-		t.insert(6,"");
-		Locator p1 =t.insert(4,"");
-		t.insert(18,"");
-		t.insert(12,"");
-		t.insert(5,"");
-		t.insert(3,"");
-		t.insert(6,"");
-		Locator p2 = t.insert(4,"");
-		t.insert(6,"");
-		t.printKeys();
-		System.out.println(t.find(4).key());
-		System.out.println(t.find(4)==p2);
-		Locator[] tr = t.findAll(4);
-		for(int i=0;i<tr.length;i++) System.out.println(tr[i].key());
+		final int N = 100000;
+		long t1 = System.nanoTime();
+		for (int i=0;i<N;i++) t.insert(i,"");
+		long t2 = System.nanoTime();
+		System.out.println("inserted "+N+" nodes. Time [s]: "+((t2-t1)*1e-9));
+		System.out.println(t.root.height);
+//		Random r = new Random();
+//		t.insert(7,"");
+//		t.insert(6,"");
+//		Locator p1 =t.insert(4,"");
+//		t.insert(18,"");
+//		t.insert(12,"");
+//		t.insert(5,"");
+//		t.insert(3,"");
+//		t.insert(6,"");
+//		Locator p2 = t.insert(4,"");
+//		t.insert(6,"");
+//		t.printKeys();
+//		System.out.println(t.find(4).key());
+//		System.out.println(t.find(4)==p2);
+//		Locator[] tr = t.findAll(4);
+//		for(int i=0;i<tr.length;i++) System.out.println(tr[i].key());
 	}
 
 	private void printKeys() {
