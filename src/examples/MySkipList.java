@@ -106,8 +106,12 @@ public class MySkipList<K extends Comparable<? super K>, E> implements
 	}
 
 	private SLNode search(K key){
-		// ......
-		return null;
+		SLNode n = topLeft;
+		while (n.below!= null){
+			n=n.below;
+			while (key.compareTo(n.next.key)>=0) n=n.next;		
+		}
+		return n;
 	}
 	
 	
@@ -139,8 +143,29 @@ public class MySkipList<K extends Comparable<? super K>, E> implements
 		while (pos.next.key.compareTo(key)== 0) pos=pos.next;		
 		// now we want to insert a node at the position pos.next:		
 		SLNode nNew = new SLNode();
-		// ......
-
+		nNew.key = key;
+		nNew.elem=o;
+		nNew.prev=pos;
+		nNew.next=pos.next;
+		nNew.next.prev=nNew;
+		nNew.prev.next=nNew;
+		// now we build eventually an index node
+		SLNode pb = nNew;
+		while (rand.nextDouble()<p){
+			while (pos.above==null) pos=pos.prev;
+			pos=pos.above;
+			SLNode index = new SLNode();
+			index.key = key;			
+			index.prev = pos;
+			index.next = pos.next;
+			pos.next.prev = index;
+			pos.next = index;
+			index.below=pb;
+			pb.above = index;
+			pb=index;
+			// if pos is topLeft we have to expand by one index level
+			if (pos == topLeft) expand();
+		}
 		size++;
 		return nNew;
 	}
@@ -363,7 +388,7 @@ public class MySkipList<K extends Comparable<? super K>, E> implements
 	public static void main(String[] args) {
 		MySkipList<Integer, String> sl = new MySkipList<>(Integer.MIN_VALUE,Integer.MAX_VALUE);
 		Random rand = new Random();
-		int n  = 1000000;
+		int n  = 100;
 		Locator<Integer,String>[] locs = new Locator[n];
 		long time1 = System.nanoTime();
 		for (int i=0;i<n;i++) {
