@@ -40,6 +40,7 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 		}
 		
 		void expand(K k, E e){
+			height=1;
 			key=k;elem=e;
 			left=new AVLNode();
 			right=new AVLNode();
@@ -123,42 +124,56 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 	@Override
 	public void remove(Locator<K, E> loc) {
 		AVLNode n = checkAndCast(loc);
-		AVLNode v = null;
-		if (! n.left.isExternal() && ! n.right.isExternal()){
-			// we have to replace
-			AVLNode w = n.left;
-			while( ! w.right.isExternal()) w = w.right;
-			v=removeAboveExternal(w);
-			// now we replace n by w
-			w.parent = n.parent;
-			if (n.isLeftChild()) w.parent.left=w;
-			else if (n.isRightChild()) w.parent.right=w;
-			else root = w;
-			w.left = n.left;
-			w.right = n.right;
-			w.height = n.height;
-			w.left.parent=w;
-			w.right.parent=w;
+		AVLNode w = null; 	// 'w' will be the node which took
+							// the position of the node which we
+							// removed really.
+		if ( ! n.left.isExternal() && ! n.right.isExternal()){
+			// we have no external child. Therefore
+			// we remove the right-most node 'v' on the left of 'n'
+			AVLNode v = n.left;
+			while ( ! v.right.isExternal()) v = v.right;
+			w = removeAboveExternal(v);
+		
+			// now we replace 'n' by 'v'
+			v.height = n.height;
+			v.left = n.left;
+			v.right = n.right;
+			v.parent = n.parent;
+			
+			// backwards chaining:
+			v.left.parent = v;
+			v.right.parent = v;
+			if (n.isLeftChild()) v.parent.left = v;
+			else if (n.isRightChild())v.parent.right = v;
+			else root = v;
 		}
 		else {
-			v=removeAboveExternal(n);
+			w = removeAboveExternal(n);
 		}
+		// invalidate 'n' and adjust the height and rebalance 
+		// the tree above 'w'
 		size--;
 		n.creator = null;
-		adjustHeightAboveAndRebalance(n);
+		adjustHeightAboveAndRebalance(w);
 	}
 
 	private AVLNode removeAboveExternal( AVLNode n) {
-		AVLNode v =null;
-		if (n.left.isExternal()) v=n.right;
-		else if (n.right.isExternal()) v=n.left;
-		else throw new RuntimeException("should never happen!");
-		if (n.isLeftChild()) n.parent.left = v;
-		else if (n.isRightChild()) n.parent.right = v;
-		else root=v;
-		v.parent = n.parent;
-		v.height = n.height;
-		return v;
+		// remove n and return the node which takes the place of n
+		AVLNode ret = null;
+		if (n.left.isExternal()){
+			// replace n by its right child
+			ret = n.right;
+		}
+		else {
+			// replace n by its left child
+			ret = n.left;
+		}
+		// chaining:
+		ret.parent = n.parent;
+		if (n.isLeftChild()) n.parent.left = ret;
+		else if (n.isRightChild()) n.parent.right = ret;
+		else root=ret;
+		return ret;
 	}
 
 
@@ -210,7 +225,7 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 			int newHeight = 1+Math.max(n.left.height,n.right.height);
 			boolean balanced = Math.abs(n.left.height-n.right.height)<2;
 			if (n.height == newHeight && balanced) return;
-			n.height=newHeight;
+			n.height=newHeight;			
 			if ( ! balanced) n=restructure(n);
 			n=n.parent;
 		}
@@ -318,38 +333,28 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 		// now we can calculate the height of b
 		b.height = Math.max(b.left.height, b.right.height)+1;
 		return b;
+
 	}
 
-	
-	public static void main(String[] args) {
-		MyAVLTree<Integer,Object> t = new MyAVLTree<>();
-		Random r = new Random();
-		final int N = 100000;
-		Locator [] locs = new Locator[N]; 
-		long t1 = System.nanoTime();
-		for (int i=0;i<N;i++)locs[i]= t.insert(i,"");
-		for (int i=0;i<N*0.9;i++) t.remove(locs[i]);
-		long t2 = System.nanoTime();
-		System.out.println("inserted "+N+" nodes. Time [s]: "+((t2-t1)*1e-9));
-		System.out.println(t.root.height);
-//		Random r = new Random();
-//		t.insert(7,"");
-//		t.insert(6,"");
-//		Locator p1 =t.insert(4,"");
-//		t.insert(18,"");
-//		t.insert(12,"");
-//		t.insert(5,"");
-//		t.insert(3,"");
-//		t.insert(6,"");
-//		Locator p2 = t.insert(4,"");
-//		t.insert(6,"");
-//		t.printKeys();
-//		System.out.println(t.find(4).key());
-//		System.out.println(t.find(4)==p2);
-//		Locator[] tr = t.findAll(4);
-//		for(int i=0;i<tr.length;i++) System.out.println(tr[i].key());
+	public void test(){
+		if (root.parent!=null) throw new RuntimeException("root has parent!");
+		if (size>0) test(root);
 	}
 
+
+	private void test(AVLNode n) {
+		if (n.isExternal()) return;
+		test(n.left);
+		test(n.right);
+		if (n.left.parent != n) throw new RuntimeException("chaining incorrect"+n.key);
+		if (n.right.parent != n) throw new RuntimeException("chaining incorrec"+n.key);
+		if (Math.max(n.left.height,n.right.height)+1!=n.height)
+			throw new RuntimeException("Height wrong"+n.key);
+		if (n.left.key !=null &&  n.left.key.compareTo(n.key)>0) throw new RuntimeException("order wrong "+n.key); 
+		if (n.right.key !=null &&  n.right.key.compareTo(n.key)<0) throw new RuntimeException("order wrong "+n.key);
+		if (Math.abs(n.left.height-n.right.height)> 1) throw new RuntimeException("unbalanced "+n.key);
+		if (n.creator != this) throw new RuntimeException("invalid node: "+n.key);
+	}
 	private void printKeys() {
 		prittyPrint(root,"");
 	}
@@ -361,6 +366,7 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 		printKeys(n.left,ind+"-");
 	
 	}
+	
 	private void prittyPrint(AVLNode r, String in) {
 		if (r.isExternal()) return;		
 		// right subtree 
@@ -384,4 +390,36 @@ public class MyAVLTree<K extends Comparable<? super K>, E> implements
 	}
 
 	
+	
+	public static void main(String[] args) {
+		MyAVLTree<Integer,Object> t = new MyAVLTree<>();
+		Random r = new Random(214);
+		final int N = 100000;
+		Locator [] locs = new Locator[N]; 
+		long t1 = System.nanoTime();
+		for (int i=0;i<N;i++)locs[i]= t.insert(i,"");
+//		for (int i=0;i<N*0.9;i++) t.remove(locs[i]);
+		long t2 = System.nanoTime();
+		System.out.println("inserted "+N+" nodes. Time [s]: "+((t2-t1)*1e-9));
+		System.out.println(t.root.height);
+		t.test();
+//		Random r = new Random();
+//		t.insert(7,"");
+//		t.insert(6,"");
+//		Locator p1 =t.insert(4,"");
+//		t.insert(18,"");
+//		t.insert(12,"");
+//		t.insert(5,"");
+//		t.insert(3,"");
+//		t.insert(6,"");
+//		Locator p2 = t.insert(4,"");
+//		t.insert(6,"");
+//		t.printKeys();
+//		System.out.println(t.find(4).key());
+//		System.out.println(t.find(4)==p2);
+//		Locator[] tr = t.findAll(4);
+//		for(int i=0;i<tr.length;i++) System.out.println(tr[i].key());
+	}
+
+
 }
