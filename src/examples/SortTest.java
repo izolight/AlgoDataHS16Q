@@ -143,6 +143,7 @@ public class SortTest {
 	
 	
 	private static void qSort(int[] a, int from, int to) {
+		if (from>=to) return;
 		int p = partition(a, from, to); 
 		// now a[p] is on its final position
 		qSort(a,from,p-1);
@@ -152,23 +153,26 @@ public class SortTest {
 	private static int partition(int[] a, int from, int to) {
 		// after return of 'p' a[0..p-1]<= a[p] and
 		// a[p]<=a[p+1..to]
-		swap(a,to,from+rand.nextInt(to-from)); // pivot random!
-		int left=from-1, right=to;
+		if (to > from) swap(a,to,from+rand.nextInt(to-from));
+		int left=from-1;
+		int right = to;
 		int pivot = a[to];
 		while(true){
-			//shift left to a ..
-			break;
-			//..
-			
+			while(a[++left]  < pivot);  // we found an element to swap at a[left]
+			while(a[--right] > pivot && right>from);
+				// either 'right' met 'left' or we found an element to swap at a[right]
+			if (left>=right) break;
+			swap(a,left,right);
 		}
-		swap(a,left,to); //  last swap
+		// final swap (put pivot to its definitive position)
+		swap(a,left,to);
 		return left;
 	}
 
 	public static void main(String[] args) {
 		long t1=0,t2=0,te1=0,te2=0,eTime=0,time=0;
 		int n = 10000000;
-		// we need a random generator
+		// we need a random generatorbreak;
 		Random rand=new Random(Integer.MAX_VALUE);
 		//rand.setSeed(54326346); // initialize always in the same state
 		ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();	
