@@ -136,6 +136,35 @@ public class SortTest {
 		cnt++;
 	}
 
+	static void quickSort(int[]a){
+		qSort(a,0,a.length-1);
+	}
+	
+	
+	
+	private static void qSort(int[] a, int from, int to) {
+		int p = partition(a, from, to); 
+		// now a[p] is on its final position
+		qSort(a,from,p-1);
+		qSort(a,p+1,to);
+	}
+
+	private static int partition(int[] a, int from, int to) {
+		// after return of 'p' a[0..p-1]<= a[p] and
+		// a[p]<=a[p+1..to]
+		swap(a,to,from+rand.nextInt(to-from)); // pivot random!
+		int left=from-1, right=to;
+		int pivot = a[to];
+		while(true){
+			//shift left to a ..
+			break;
+			//..
+			
+		}
+		swap(a,left,to); //  last swap
+		return left;
+	}
+
 	public static void main(String[] args) {
 		long t1=0,t2=0,te1=0,te2=0,eTime=0,time=0;
 		int n = 10000000;
