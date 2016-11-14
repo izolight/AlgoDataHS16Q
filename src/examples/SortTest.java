@@ -136,11 +136,28 @@ public class SortTest {
 		cnt++;
 	}
 
+	static void quickSelect(int a[], int rank){
+		// on return the following condition helds:
+		// a[0..rank-1] <=  a[rank] <= a[rank+1..a.length-1]
+		qSelect(a,0,a.length-1,rank);
+	}
+	
+	private static void qSelect(int[] a, int from, int to, int rank) {
+		// on return the following condition helds:
+		// a[from..rank-1] <=  a[rank] <= a[rank+1..to]
+		int piv = partition(a, from, to);
+		if (piv==rank) return;
+		else if(piv < rank) qSelect(a,piv+1,to,rank);
+		else qSelect(a,from,piv-1,rank);
+	}
+	
+	
 	static void quickSort(int[]a){
 		qSort(a,0,a.length-1);
 	}
 	
 	
+
 	
 	private static void qSort(int[] a, int from, int to) {
 		if (from>=to) return;
@@ -171,16 +188,16 @@ public class SortTest {
 
 	public static void main(String[] args) {
 		long t1=0,t2=0,te1=0,te2=0,eTime=0,time=0;
-		int n = 10000000;
+		int n = 50000000;
 		// we need a random generatorbreak;
 		Random rand=new Random(Integer.MAX_VALUE);
-		//rand.setSeed(54326346); // initialize always in the same state
+		rand.setSeed(8237493); // initialize always in the same state
 		ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();	
 		// new array
 		int [] a = new int[n];
 		// fill it randomly
 		for (int i=0;i<a.length ;i++) {
-			a[i]=i;// rand.nextInt(n);
+			a[i]=i;rand.nextInt(n);
 		}
 
 		// mix: a little bit 
@@ -192,7 +209,8 @@ public class SortTest {
 		// get Time
 		te1=System.nanoTime();
 		t1 = threadBean.getCurrentThreadCpuTime();
-		mergeSort(a);
+		quickSelect(a,100);
+		System.out.println(a[100]);
 		te2 = System.nanoTime();
 		t2 = threadBean.getCurrentThreadCpuTime();
 		time=t2-t1;
